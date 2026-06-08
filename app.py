@@ -5,78 +5,210 @@ import numpy as np
 app = Flask(__name__)
 
 # Load Model
-with open("model.pkl", "rb") as file:
-    model = pickle.load(file)
+model = pickle.load(open("model.pkl", "rb"))
 
 HTML = """
 <!DOCTYPE html>
 <html>
 <head>
     <title>House Price Prediction</title>
+
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <style>
-        body{
-            font-family: Arial;
-            background:#f4f4f4;
-            padding:40px;
+
+    *{
+        margin:0;
+        padding:0;
+        box-sizing:border-box;
+        font-family:'Segoe UI',sans-serif;
+    }
+
+    body{
+        min-height:100vh;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        background:linear-gradient(135deg,#0f172a,#1e293b,#2563eb);
+        padding:20px;
+    }
+
+    .container{
+        width:100%;
+        max-width:900px;
+        background:rgba(255,255,255,0.1);
+        backdrop-filter:blur(15px);
+        border-radius:20px;
+        padding:40px;
+        box-shadow:0 8px 32px rgba(0,0,0,.3);
+        color:white;
+    }
+
+    .header{
+        text-align:center;
+        margin-bottom:30px;
+    }
+
+    .header h1{
+        font-size:2.5rem;
+        margin-bottom:10px;
+    }
+
+    .header p{
+        color:#dbeafe;
+    }
+
+    .form-grid{
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:20px;
+    }
+
+    .input-box{
+        position:relative;
+    }
+
+    .input-box i{
+        position:absolute;
+        left:15px;
+        top:16px;
+        color:#2563eb;
+    }
+
+    input{
+        width:100%;
+        padding:14px 14px 14px 45px;
+        border:none;
+        border-radius:12px;
+        outline:none;
+        font-size:15px;
+    }
+
+    .btn{
+        margin-top:25px;
+        width:100%;
+        padding:15px;
+        border:none;
+        border-radius:12px;
+        font-size:18px;
+        font-weight:bold;
+        cursor:pointer;
+        background:#2563eb;
+        color:white;
+        transition:0.3s;
+    }
+
+    .btn:hover{
+        background:#1d4ed8;
+        transform:translateY(-2px);
+    }
+
+    .result{
+        margin-top:30px;
+        padding:25px;
+        border-radius:15px;
+        text-align:center;
+        background:rgba(255,255,255,0.15);
+    }
+
+    .result h2{
+        margin-bottom:10px;
+    }
+
+    .price{
+        font-size:2rem;
+        color:#4ade80;
+        font-weight:bold;
+    }
+
+    .footer{
+        margin-top:30px;
+        text-align:center;
+        color:#cbd5e1;
+        font-size:14px;
+    }
+
+    @media(max-width:768px){
+        .form-grid{
+            grid-template-columns:1fr;
         }
-        .container{
-            max-width:500px;
-            margin:auto;
-            background:white;
-            padding:20px;
-            border-radius:10px;
-            box-shadow:0 0 10px rgba(0,0,0,0.1);
+
+        .header h1{
+            font-size:2rem;
         }
-        input{
-            width:100%;
-            padding:10px;
-            margin:8px 0;
-        }
-        button{
-            width:100%;
-            padding:10px;
-            background:#007BFF;
-            color:white;
-            border:none;
-            cursor:pointer;
-        }
-        h2{
-            text-align:center;
-        }
-        .result{
-            margin-top:20px;
-            text-align:center;
-            font-size:20px;
-            color:green;
-        }
+    }
+
     </style>
 </head>
+
 <body>
 
 <div class="container">
-    <h2>House Price Prediction</h2>
+
+    <div class="header">
+        <h1><i class="fas fa-house"></i> House Price Prediction</h1>
+        <p>Machine Learning Powered Real Estate Valuation System</p>
+    </div>
 
     <form method="POST">
 
-        <input type="number" name="beds" placeholder="Beds" required>
+        <div class="form-grid">
 
-        <input type="number" name="baths" placeholder="Baths" required>
+            <div class="input-box">
+                <i class="fas fa-bed"></i>
+                <input type="number" name="beds"
+                placeholder="Number of Bedrooms" required>
+            </div>
 
-        <input type="number" name="size" placeholder="Size (sq ft)" required>
+            <div class="input-box">
+                <i class="fas fa-bath"></i>
+                <input type="number" name="baths"
+                placeholder="Number of Bathrooms" required>
+            </div>
 
-        <input type="number" name="lot_size" placeholder="Lot Size" required>
+            <div class="input-box">
+                <i class="fas fa-ruler-combined"></i>
+                <input type="number" name="size"
+                placeholder="House Size (sq ft)" required>
+            </div>
 
-        <input type="number" name="zip_code" placeholder="Zip Code" required>
+            <div class="input-box">
+                <i class="fas fa-map"></i>
+                <input type="number" name="lot_size"
+                placeholder="Lot Size" required>
+            </div>
 
-        <button type="submit">Predict</button>
+            <div class="input-box">
+                <i class="fas fa-location-dot"></i>
+                <input type="number" name="zip_code"
+                placeholder="Zip Code" required>
+            </div>
+
+        </div>
+
+        <button type="submit" class="btn">
+            <i class="fas fa-chart-line"></i>
+            Predict House Price
+        </button>
 
     </form>
 
     {% if prediction %}
+
     <div class="result">
-        Predicted Price: {{ prediction }}
+        <h2>Estimated Property Value</h2>
+        <div class="price">
+            ${{ prediction }}
+        </div>
     </div>
+
     {% endif %}
+
+    <div class="footer">
+        Developed by Pranita | Data Analyst & Machine Learning Project
+    </div>
+
 </div>
 
 </body>
@@ -102,7 +234,7 @@ def home():
 
         pred = model.predict(features)[0]
 
-        prediction = f"${pred:,.2f}"
+        prediction = format(round(pred, 2), ",")
 
     return render_template_string(
         HTML,
