@@ -1,7 +1,13 @@
+import warnings
+# Silence the scikit-learn version mismatch warning
+warnings.filterwarnings("ignore", category=UserWarning, module="sklearn")
+
 import flask
 from flask import Flask, request, jsonify
 import pickle
 import numpy as np
+
+# ... rest of your app.py code stays exactly the same
 
 app = Flask(__name__)
 
