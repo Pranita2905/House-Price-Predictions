@@ -205,10 +205,6 @@ HTML = """
 
     {% endif %}
 
-    <div class="footer">
-        Developed by Pranita | Data Analyst & Machine Learning Project
-    </div>
-
 </div>
 
 </body>
